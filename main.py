@@ -1,3 +1,5 @@
+import os
+
 import kivy
 import kivy.uix.button as kb
 from kivy.app import App
@@ -9,19 +11,37 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.properties import NumericProperty, ReferenceListProperty
 from kivy.vector import Vector
-
 from kivy.uix.boxlayout import BoxLayout
 
+from kivy.uix.screenmanager import ScreenManager, Screen
+from kivy.uix.dropdown import DropDown
+from kivy.uix.button import Button
 
-import ArbitraryData as AD
+import Modules.ArbitraryData.ArbitraryData as AD
 
 
 # replace with your current kivy version !
 kivy.require('1.11.1')
 
 
-class StartMenu(BoxLayout):
+class StartScreen(Screen):
+    pass
+
+
+class NewProjectScreen(Screen):
+    pass
+
+
+class StartMenu(Screen):
+    # running application
     app = None
+
+    # screen manage
+    sm = None
+
+    # modules
+    dir_with_modules = "Modules"
+    available_modules = []
     work_module = None
 
     def __init__(self, current_app, **kwargs):
@@ -29,16 +49,75 @@ class StartMenu(BoxLayout):
         self.work_module = AD.ArbitraryData()
         self.app = current_app
 
-    def new_project(self):
-        print(self.work_module.module_name)
-        print(self.app.name_app)
+        # * Find available modules *
+        self.find_modules()
 
-        # for child in self.children:
+        # * Create Screens *
+        self.sm = self.ids.sm
+        self.sm.add_widget(StartScreen(name='start'))
 
-    def quit(self):
+        # self.scrNewProject = NewProjectScreen(name='newproject')
+        self.sm.add_widget(NewProjectScreen(name='new_project'))
+
+        # * File Button *
+        self.drop_file()
+
+    # --- create DropDown File list ---
+    def drop_file(self):
+        dd_file = DropDown()
+
+        # - New Project -
+        btn = Button(text="New Project", size_hint_y=None, height=44)
+        btn.bind(on_release=lambda _: self.new_project(dd_file))
+        dd_file.add_widget(btn)
+
+        # - Open Project -
+        btn = Button(text="Open Project", size_hint_y=None, height=44)
+        btn.bind(on_release=lambda _: self.open_project(dd_file))
+        dd_file.add_widget(btn)
+
+        # - Open Recent Project -
+        btn = Button(text="Open Recent Project", size_hint_y=None, height=44)
+        btn.bind(on_release=lambda _: self.open_recent_project(dd_file))
+        dd_file.add_widget(btn)
+
+        # - Exit -
+        btn = Button(text="Exit", size_hint_y=None, height=44)
+        btn.bind(on_release=lambda _: self.quit(dd_file))
+        dd_file.add_widget(btn)
+
+        # -- Connect the DropDown list with the File button --
+        bfile = self.ids.start_bFile
+        bfile.bind(on_release=dd_file.open)
+        dd_file.bind(on_select=lambda _: None)
+
+    def new_project(self, dd_file):
+        print("New Project")
+        dd_file.dismiss()
+        self.sm.current = "new_project"
+
+    def open_project(self, dd_file):
+        print("Open Project")
+        dd_file.dismiss()
+
+    def open_recent_project(self, dd_file):
+        print("Open Recent Project")
+        dd_file.dismiss()
+
+    def quit(self, dd_file):
+        dd_file.dismiss()
         stopTouchApp()
-        # self.app.stop()
-        # App.get_running_app().stop()
+
+    def find_modules(self):
+        sub_dires = [x[0] for x in os.walk(self.dir_with_modules)]
+        res_modules = []
+        for one_sub_dir in sub_dires:
+            res_dir = one_sub_dir.replace(self.dir_with_modules, '')[1:]
+            res_dir = res_dir.split("\\", 1)[0]
+            if len(res_dir) > 0:
+                res_modules.append(res_dir)
+        self.available_modules = list(set(res_modules))
+        print(self.available_modules)
 
 
 class IvisApp(App):

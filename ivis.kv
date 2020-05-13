@@ -2,78 +2,80 @@
 
 <StartMenu>:
     BoxLayout:
+        orientation: 'vertical'
         BoxLayout:
             id: leftBox
-            orientation: 'vertical'
-            size_hint: (0.25,1)
-            Button:
-                text: "New Project"
-                on_press: root.new_project()
-            Button:
-                text: "Load Project"
-            Button:
-                text: "Quit"
-                on_press: root.quit()
-        BoxLayout:
-            mix_size: root.ids.leftBox.width
             orientation: 'horizontal'
-            BoxLayout:
-                orientation: 'vertical'
-                Label:
-                    text: 'Label1'
-                Label:
-                    text: 'Label2'
-            BoxLayout:
-                orientation: 'vertical'
-                Label:
-                    text: 'Label1'
-                Label:
-                    text: 'Label2'
+            size_hint: (1, None)
+            height: 44
+            Button:
+                id: start_bFile
+                text: "File"
+            Button:
+                id: start_bOption
+                text: "Options"
+        ScreenManager:
+            id: sm
 
 
+<StartScreen>:
+    canvas.before:
+        Color:
+            rgba: .9, .9, .9, 1
+        Rectangle:
+            size: self.size
 
+<NewProjectScreen>:
+    canvas.before:
+        Color:
+            rgba: .4, .4, .4, 1
+        Rectangle:
+            size: self.size
+    BoxLayout:
+        orientation: 'vertical'
+        canvas:
+            Color:
+                rgba: .2, .2, .2, 1
+            Rectangle:
+                pos: self.center_x - 1, 0
+                size: 2, self.height
+        Spinner:  # to choose a module
+            id: spModule
+            text: "Choose a module to load"
+            size_hint: (1, None)
+            height: 44
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: (1, None)
+            height: 30
+            canvas:
+                Color:
+                    rgba: .2, .2, .2, 1
+                Rectangle:
+                    pos: 0, self.center_y - self.height/2
+                    size: self.width, 2
+            Label:
+                text: "General options"
+            Label:
+                text: "Module specific Options"
+                color: 0.6, 0.6, 1.0, 1.0
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:  # general options
+                orientation: 'horizontal'
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        text: 'Label1'
+                    Label:
+                        text: 'Label2'
+                BoxLayout:
+                    orientation: 'vertical'
+                    Label:
+                        text: 'Label1'
+                    Label:
+                        text: 'Label2'
+            BoxLayout:  # module specific options
+                orientation: 'horizontal'
 
-
-
-
-
-#<StartMenu>:
-#    canvas:
-#        Rectangle:
-#            pos: self.center_x - 5, 0
-#            size: 10, self.height
-#    Label:
-#        font_size: 70
-#        center_x: root.width / 4
-#        top: root.top - 50
-#        text: "Label"
-#    Button:
-#        text: "New Project"
-#        center_x: root.width / 4
-#        top: root.height / 2
-#        on_press: root.new_project()
-#    BoxLayout:
-#        orientation: 'vertical'
-#        Label:
-#            text: "New Project"
-#        Label:
-#            text: "Load Project"
-
-
-
-
-
-
-
-
-#    PongBall:
-#        center: self.parent.center
-#
-#
-#<PongBall>:
-#    size: 50, 50
-#    canvas:
-#        Ellipse:
-#            pos: self.pos
-#            size: self.size
 
