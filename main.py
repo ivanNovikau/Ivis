@@ -1,7 +1,7 @@
 import os
+import importlib
 
 import kivy
-import kivy.uix.button as kb
 from kivy.app import App
 from kivy.base import runTouchApp, stopTouchApp
 from kivy.uix.gridlayout import GridLayout
@@ -16,9 +16,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.dropdown import DropDown
 from kivy.uix.button import Button
-
-import Modules.ArbitraryData.ArbitraryData as AD
-
 
 # replace with your current kivy version !
 kivy.require('1.11.1')
@@ -38,26 +35,26 @@ class StartMenu(Screen):
 
     # screen manage
     sm = None
+    nscr_start = 'start'
+    nscr_new_project = 'new_project'
 
     # modules
     dir_with_modules = "Modules"
-    available_modules = []
+    names_available_modules = []
+    available_modules = {}
     work_module = None
 
     def __init__(self, current_app, **kwargs):
         super(StartMenu, self).__init__(**kwargs)
-        self.work_module = AD.ArbitraryData()
         self.app = current_app
-
-        # * Find available modules *
-        self.find_modules()
 
         # * Create Screens *
         self.sm = self.ids.sm
-        self.sm.add_widget(StartScreen(name='start'))
+        self.sm.add_widget(StartScreen(name=self.nscr_start))
+        self.sm.add_widget(NewProjectScreen(name=self.nscr_new_project))
 
-        # self.scrNewProject = NewProjectScreen(name='newproject')
-        self.sm.add_widget(NewProjectScreen(name='new_project'))
+        # * Find available modules *
+        self.find_modules()
 
         # * File Button *
         self.drop_file()
@@ -96,6 +93,12 @@ class StartMenu(Screen):
         dd_file.dismiss()
         self.sm.current = "new_project"
 
+        # - Put names of available modules to the Spinner on the New Project Screen -
+        scrNewProject = self.sm.get_screen(self.nscr_new_project)
+        spModule = scrNewProject.ids.spModule
+        spModule.values = self.names_available_modules
+        spModule.bind(text=self.module_chosen)
+
     def open_project(self, dd_file):
         print("Open Project")
         dd_file.dismiss()
@@ -116,8 +119,25 @@ class StartMenu(Screen):
             res_dir = res_dir.split("\\", 1)[0]
             if len(res_dir) > 0:
                 res_modules.append(res_dir)
-        self.available_modules = list(set(res_modules))
-        print(self.available_modules)
+        self.names_available_modules = list(set(res_modules))
+        print(self.names_available_modules)
+
+        # import modules
+        for name_module in self.names_available_modules:
+            module_folder = "Modules." + name_module
+            self.available_modules[name_module] = importlib.import_module(
+                module_folder + "." + name_module
+            )
+
+    def module_chosen(self, _, name_module):
+        # clean the module specific screen
+        scrNewProject = self.sm.get_screen(self.nscr_new_project)
+        mspScreen = scrNewProject.ids.mspScreen
+        mspScreen.clear_widgets()
+
+        # create the module specific screen
+        class_module = getattr(self.available_modules[name_module], name_module)
+        class_module.new_project_screen(name_module, self)
 
 
 class IvisApp(App):
