@@ -1,5 +1,6 @@
 from kivy.uix.label import Label
 
+
 class ArbitraryData:
     name = "ArbitraryData"
 

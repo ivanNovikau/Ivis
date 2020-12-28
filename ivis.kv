@@ -26,6 +26,7 @@
             size: self.size
 
 <NewProjectScreen>:
+    root_path_input: root_path_input
     canvas.before:
         Color:
             rgba: .4, .4, .4, 1
@@ -66,16 +67,44 @@
                 BoxLayout:
                     orientation: 'vertical'
                     Label:
-                        text: 'Label1'
+                        text: 'Root path'
+                        size_hint_y: None
+                        height: 30
                     Label:
-                        text: 'Label2'
+                        text: 'Project Name'
+                        size_hint_y: None
+                        height: 30
+                    Label:
+                        text: 'Initial configuration'
+                        size_hint_y: None
+                        height: 30
+                    Label:
                 BoxLayout:
                     orientation: 'vertical'
+                    TextInput:
+                        id: root_path_input
+                        size_hint_y: None
+                        height: 30
+                        multiline: False
+                    TextInput:
+                        id: project_name_input
+                        size_hint_y: None
+                        height: 30
+                        multiline: False
+                    TextInput:
+                        id: init_conf_input
+                        size_hint_y: None
+                        height: 30
+                        multiline: False
+                    Button:
+                        id: bCreateProject
+                        text: "Create Project"
+                        size_hint_y: None
+                        height: 30
                     Label:
-                        text: 'Label1'
-                    Label:
-                        text: 'Label2'
             BoxLayout:  # module specific options
                 id: mspScreen
+
+
 
 

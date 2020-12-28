@@ -21,12 +21,31 @@ from kivy.uix.button import Button
 kivy.require('1.11.1')
 
 
-class StartScreen(Screen):
+class StartScreen(Screen):  # Empty screen
     pass
 
 
 class NewProjectScreen(Screen):
-    pass
+    root_path = None
+    project_name = None
+    init_conf_file_name = None
+
+    def __init__(self, **kwargs):
+        super(NewProjectScreen, self).__init__(**kwargs)
+
+        # create inputs
+        self.ids.root_path_input.bind(on_text_validate=self.set_root_path)
+        self.ids.project_name_input.bind(on_text_validate=self.set_project_name)
+        self.ids.init_conf_input.bind(on_text_validate=self.set_init_conf_file_name)
+
+    def set_root_path(self, instance):
+        self.root_path = instance.text
+
+    def set_project_name(self, instance):
+        self.project_name = instance.text
+
+    def set_init_conf_file_name(self, instance):
+        self.init_conf_file_name = instance.text
 
 
 class StartMenu(Screen):
